@@ -1,4 +1,5 @@
 import React from "react";
+import Field from "../components/Field";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 
@@ -8,13 +9,15 @@ const SignUp = () => {
   const role = searchParams.get("role");
 
   const [formData, setFormData] = useState({
-    username: "",
+    full_name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
   const [error, setError] = useState("");
+   const [generatedUsername, setGeneratedUsername] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,27 +32,30 @@ const SignUp = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/signup/", {
+      const response = await fetch("http://localhost:8000/api/auth/register/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: formData.username,
+          full_name: formData.full_name,
           email: formData.email,
           password: formData.password,
           role: role,
         }),
       });
 
-      console.log("Response:", response);
+      const data = await response.json();
+      console.log("Response:", data);
+
       if (response.ok) {
-        // Redirect based on role
-        if (role === "customer") {
-          navigate("/dashboard/customer");
-        } else if (role === "collector") {
-          navigate("/dashboard/collector");
+        setGeneratedUsername(data.username); // Save username from backend
+        setShowModal(true); // Show modal
+
+          if (data.access) {
+          localStorage.setItem("accessToken", data.access);
+          localStorage.setItem("refreshToken", data.refresh);
         }
+
       } else {
-        const data = await response.json();
         setError(data.detail || "Signup failed");
       }
     } catch (err) {
@@ -86,44 +92,40 @@ const SignUp = () => {
             Sign up to create an account as a <strong>{role}</strong>
           </p>
 
-          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          {error && <p className="text-red-500 text-center mb-2">{error}</p>}
 
-          <form className="space-y-8" onSubmit={handleSignup}>
-            <input
+          <form className="space-y-6" onSubmit={handleSignup}> 
+            <Field
               type="text"
-              name="username"
+              name="full_name"
               placeholder="Full Name"
-              value={formData.username}
+              value={formData.full_name}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 rounded bg-white/20 backdrop-blur text-white placeholder-gray-350 h-[50px]"
             />
-            <input
+            <Field
               type="email"
               name="email"
               placeholder="Email"
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 rounded bg-white/20 backdrop-blur text-white placeholder-gray-350 h-[50px]"
             />
-            <input
+            <Field
               type="password"
               name="password"
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 rounded bg-white/20 backdrop-blur text-white placeholder-gray-350 h-[50px]"
             />
-            <input
+            <Field
               type="password"
               name="confirmPassword"
               placeholder="Confirm Password"
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 rounded bg-white/20 backdrop-blur text-white placeholder-gray-350 h-[50px]"
             />
             <div className="items-center justify-center flex">
               <button
@@ -134,14 +136,47 @@ const SignUp = () => {
               </button>
             </div>
           </form>
+
           <p className="mt-4 text-sm text-center">
             Already have an account?{" "}
-            <span className="underline cursor-pointer text-trashGreen">
+            <span className="underline cursor-pointer text-trashGreen"
+            onClick={() => navigate("/login?role=customer")}>
               Login
             </span>
           </p>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-sm w-full">
+            <h2 className="text-2xl font-bold text-trashGreen mb-4">
+              🎉Signup Successful!
+            </h2>
+            <p className="mb-4 text-trashBlue">
+              Welcome, <strong>{formData.full_name}</strong>!
+            </p>
+            <p className=" text-trashBlue">Your username is:</p>
+            <p className="font-mono text-lg text-trashBlue mb-4">
+              {generatedUsername}
+            </p>
+            <button
+              className="bg-trashGreen text-white py-2 px-4 rounded hover:bg-green-800"
+              onClick={() => {
+                if (role === "customer") {
+                  navigate("/dashboard/customer");
+                } else if (role === "collector") {
+                  navigate("/dashboard/collector");
+                }
+              }}
+            >
+              Continue to Dashboard
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
