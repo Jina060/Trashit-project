@@ -1,39 +1,32 @@
-from django.shortcuts import render
-
-# Create your views here.
-from rest_framework import generics, permissions
-from django.contrib.auth import get_user_model
-from .serializers import RegisterSerializer
+from rest_framework import generics, status
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.decorators import api_view
+from .serializers import RegisterSerializer, CustomTokenObtainPairSerializer
+from django.contrib.auth import get_user_model
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
-    permission_classes = [permissions.AllowAny]
     serializer_class = RegisterSerializer
 
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            "message": "Signup successful",
+            "username": user.username,
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "role": user.role,
+        }, status=status.HTTP_201_CREATED)
+    
 class LoginView(TokenObtainPairView):
-    #JWT Login funtionality
-    pass
+    serializer_class = CustomTokenObtainPairSerializer
 
-
-@api_view(['POST'])
-def signup(request):
-    data = request.data
-    username = data.get('username')
-    email = data.get('email')
-    password = data.get('password')
-    role = data.get('role')
-
-    if not username or not email or not password or not role:
-        return Response({'error': 'All fields are required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if User.objects.filter(username=username).exists():
-        return Response({'error': 'Username already exists.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    user = User.objects.create_user(username=username, email=email, password=password, role=role)
-    return Response({'message': 'User created successfully.'}, status=status.HTTP_201_CREATED)

@@ -7,8 +7,12 @@ class CustomUser(AbstractUser):
         ('collector', 'Trash Collector'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-    # Add more custom fields here if needed (e.g., phone_number, address)
+    full_name = models.CharField(max_length=100, blank=True, null=True)
+    email = models.EmailField(unique=True)
+
+    REQUIRED_FIELDS = ['email', 'full_name', 'role']
 
     def __str__(self):
-        return self.username
+        return self.email
+
 
