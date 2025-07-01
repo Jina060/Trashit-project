@@ -2,7 +2,9 @@ import React from "react";
 
  const Navbar = () => {
     return (
-        <nav className=" px-6 py-4 flex justify-between items-center">
+        <div className=""> 
+        <nav className=" px-6 py-4 flex justify-between items-center fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-white to-green-200 shadow-md
+">
             {/* LOGO */}
             <div className="flex justify-between items-center ">
                  <img src="/trashlogo.png" alt="Logo" className="w-20"/>
@@ -22,6 +24,7 @@ import React from "react";
             <button className="bg-trashBlue text-trashGreen px-4 py-2 hover:bg-green-700 rounded-xl text-center">Sign Up</button>
            </div>
         </nav>
+        </div>
     );
  };
 

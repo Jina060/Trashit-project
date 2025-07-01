@@ -40,6 +40,8 @@ INSTALLED_APPS = [
 
     #custom app
     'accounts',
+    'chatbot',
+    'pickups',
 
     #other apps
     'rest_framework',
