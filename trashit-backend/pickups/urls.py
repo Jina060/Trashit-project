@@ -1,8 +1,11 @@
 # pickup/urls.py
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import PickupRequestViewSet
 
-from django.urls import path
-from .views import PickupRequestCreateView
+router = DefaultRouter()
+router.register(r'requests', PickupRequestViewSet, basename='pickup-request')
 
 urlpatterns = [
-    path('schedule/', PickupRequestCreateView.as_view(), name='schedule-pickup'),
+    path('', include(router.urls)),
 ]

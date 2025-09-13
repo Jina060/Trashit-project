@@ -36,7 +36,7 @@ const LandingPage = () => {
                 className="px-4 py-2 bg-trashBlue text-white rounded-2xl hover:bg-trashGreen transition"
                 onClick={() => handleRoleSelect("customer")}
               >
-                User
+                Customer
               </button>
               <button
                 className="px-4 py-2 bg-trashBlue text-white rounded-2xl hover:bg-trashGreen transition"

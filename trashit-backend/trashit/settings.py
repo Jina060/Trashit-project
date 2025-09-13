@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'accounts',
     'chatbot',
     'pickups',
+    'assignment',
+    'location',
+    'payment',
+    'subscription',
 
     #other apps
     'rest_framework',
@@ -143,13 +147,14 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+
     # You can add other settings here later, like permissions, pagination, etc.
 }
 
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # access token expires in 30 mins
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=40),  # access token expires in 30 mins
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # refresh token expires in 1 day
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,

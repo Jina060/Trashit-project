@@ -66,3 +66,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'role': user.role,
         }
      
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'full_name', 'role']

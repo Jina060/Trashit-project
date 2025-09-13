@@ -38,7 +38,7 @@ const Login = () => {
         localStorage.setItem("accesstoken", data.access); // Store JWT token
         localStorage.setItem("refreshToken", data.refresh)
 
-        // Optional: Store role if your backend returns it
+        // Store role if your backend returns it
         if (data.role === "customer") {
           navigate("/dashboard/customer");
         } else if (data.role === "collector") {

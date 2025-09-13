@@ -96,9 +96,10 @@ export default function RightSidebar() {
         </div>
         <button
           onClick={() => setChatbotOpen(true)}
-          className="bg-white hover:bg-green-700 text-trashGreen p-4 rounded-full border-trashGreen border-8 shadow-lg transition-all duration-300"
+          className="bg-white hover:bg-green-700 text-trashGreen p-4 rounded-full border-trashGreen border-8 shadow-lg transition-all duration-300 animate-bounce"
           aria-label="Open Chatbot"
         >
+          
           <MessageCircle className="w-6 h-6" />
         </button>
       </div>
